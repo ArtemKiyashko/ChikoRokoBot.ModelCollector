@@ -47,6 +47,8 @@ namespace ChikoRokoBot.ModelCollector
                     drop.ModelUrlGlb = $"{modelUrlBase}/scene.glb";
                     drop.ModelUrlUsdz = $"{modelUrlBase}/scene.usdz";
 
+                    _logger.LogInformation($"Drop {drop.PartitionKey}-{drop.RowKey} updated. New value glb: {drop.ModelUrlGlb} New value usdz: {drop.ModelUrlUsdz} ");
+
                     await _tableClient.UpdateEntityAsync(drop, drop.ETag);
                 }
             }

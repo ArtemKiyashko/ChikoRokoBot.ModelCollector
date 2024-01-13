@@ -15,6 +15,7 @@
     <None Remove="Models\" />
     <None Remove="Options\" />
     <None Remove="Clients\" />
+    <None Remove="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -29,5 +30,6 @@
     <Folder Include="Models\" />
     <Folder Include="Options\" />
     <Folder Include="Clients\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 </Project>
