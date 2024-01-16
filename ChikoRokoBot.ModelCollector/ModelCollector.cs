@@ -29,7 +29,7 @@ namespace ChikoRokoBot.ModelCollector
         }
 
         [FunctionName("ModelCollector")]
-        public async Task Run([TimerTrigger("%FUNCTION_SCHEDULE%", RunOnStartup = true)]TimerInfo myTimer)
+        public async Task Run([TimerTrigger("%FUNCTION_SCHEDULE%", RunOnStartup = false)]TimerInfo myTimer)
         {
             var allDrops = _tableClient.QueryAsync<DropTableEntity>(drop => drop.PartitionKey.Equals(_options.DefaultPartitionKey));
 
