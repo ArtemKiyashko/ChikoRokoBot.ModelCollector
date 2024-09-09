@@ -31,26 +31,25 @@ namespace ChikoRokoBot.ModelCollector
         [FunctionName("ModelCollector")]
         public async Task Run([TimerTrigger("%FUNCTION_SCHEDULE%", RunOnStartup = false)]TimerInfo myTimer)
         {
-            var allDrops = _tableClient.QueryAsync<DropTableEntity>(drop => drop.PartitionKey.Equals(_options.DefaultPartitionKey));
+            var allDrops = _tableClient.QueryAsync<DropTableEntity>(
+                drop => drop.PartitionKey.Equals(_options.DefaultPartitionKey)
+                && (drop.ModelUrlGlb == null || drop.ModelUrlUsdz == null)
+                && drop.Mechanic != "BLINDBOX" );
 
             await foreach (var drop in allDrops)
             {
                 if (!drop.Toyid.HasValue) continue;
 
-                if (string.IsNullOrEmpty(drop.ModelUrlGlb) ||
-                    string.IsNullOrEmpty(drop.ModelUrlUsdz))
-                {
-                    var modelUrlBase = await _chikoRokoClient.GetModelsBaseUrl(drop.Toyid.Value);
+                var modelUrlBase = await _chikoRokoClient.GetModelsBaseUrl(drop.Toyid.Value);
 
-                    if (string.IsNullOrEmpty(modelUrlBase)) continue;
+                if (string.IsNullOrEmpty(modelUrlBase)) continue;
 
-                    drop.ModelUrlGlb = $"{modelUrlBase}/scene.glb";
-                    drop.ModelUrlUsdz = $"{modelUrlBase}/scene.usdz";
+                drop.ModelUrlGlb = $"{modelUrlBase}/scene.glb";
+                drop.ModelUrlUsdz = $"{modelUrlBase}/scene.usdz";
 
-                    _logger.LogInformation($"Drop {drop.PartitionKey}-{drop.RowKey} updated. New value glb: {drop.ModelUrlGlb} New value usdz: {drop.ModelUrlUsdz} ");
+                _logger.LogInformation($"Drop {drop.PartitionKey}-{drop.RowKey} updated. New value glb: {drop.ModelUrlGlb} New value usdz: {drop.ModelUrlUsdz} ");
 
-                    await _tableClient.UpdateEntityAsync(drop, drop.ETag);
-                }
+                await _tableClient.UpdateEntityAsync(drop, drop.ETag);
             }
         }
     }
